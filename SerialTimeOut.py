@@ -4,6 +4,7 @@ from contextlib import contextmanager
 
 from firebase import firebase
 from urllib.request import urlopen, Request
+import urllib
 import bs4
 
 ser = serial.Serial(port='/dev/ttyS0',baudrate=9600)
@@ -49,14 +50,16 @@ def dataDecode(data_list):
     return DATA_FRAME
 
 def dataUpdate(url):
-    firebase.FirebaseApplication(url, None)
-    fbase.put()
-
+    # fbase = firebase.FirebaseApplication(url, None)
+    # fbase.put()
+    pass
 while 1:
     enc_location = urllib.parse.quote(location, "+날씨")
     url = "https://search.naver.com/search.naver?ie=utf8&query=" + enc_location
     
     SYS_DATA_FRAME = dataDecode(dataRequest('^'))
     print(SYS_DATA_FRAME)
+
+    
     
     
