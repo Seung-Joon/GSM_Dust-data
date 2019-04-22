@@ -23,6 +23,19 @@ def timeout(time):
 def raise_timeout(signum, frame):
     raise TimeoutError
 
+def getDateValue(): # current date
+  import datetime as d
+  today = d.datetime.today()
+
+  year = today.year
+  month = today.month
+  day = today.day
+  hour = today.hour
+  minute = today.minute
+  second = today.second
+  date_value =  str(year) + str(append0(month)) + str(append0(day)) + str(append0(hour)) + str(append0(minute)) + str(append0(second))
+  return date_value
+
 def dataRequest(request_code = ''):
     ser.write(request_code.encode('utf-16'))
     print("requesting data")
@@ -44,7 +57,10 @@ def dataRequest(request_code = ''):
 
 def dataDecode(data_list):
     if len(data_list) > 1:
-        DATA_FRAME = {'PM1.0': data_list[2], 'PM2.5' : data_list[3], 'PM10' : data_list[4], 'V_SYSTEM' : data_list[6] / data_list[7], 'V_SOLAR' : data_list[9] / data_list[10], 'TEMPURATURE' : data_list[11], 'HUMIDITY' : data_list[12], 'ERR' : 0}
+        DATA_FRAME = {'PM1.0': data_list[2], 'PM2.5' : data_list[3],
+                      'PM10' : data_list[4], 'V_SYSTEM' : data_list[6] / data_list[7],
+                      'V_SOLAR' : data_list[9] / data_list[10], 'TEMPURATURE' : data_list[11],
+                      'HUMIDITY' : data_list[12], 'ERR' : 0}
     else:
         DATA_FRAME = {'ERR' : -1}
     return DATA_FRAME
