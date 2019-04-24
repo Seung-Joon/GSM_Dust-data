@@ -58,7 +58,7 @@ def dataDecode(data_list):
 url = 'https://gsm-dustdata.firebaseio.com'
 
 fbase = firebase.FirebaseApplication(url,None)
-def dataUpdate(url, dataFrame : list): 
+def dataUpdate(url, dataFrame : dict): 
     from firebase import firebase
     fbase = firebase.FirebaseApplication(url, None)
     
@@ -77,5 +77,5 @@ while 1:
     SYS_DATA_FRAME = dataDecode(dataRequest('^'))
     print(SYS_DATA_FRAME)
     print('updating data')
-    dataUpdate(url, list(SYS_DATA_FRAME))
+    dataUpdate(url, SYS_DATA_FRAME)
     print('done..')
