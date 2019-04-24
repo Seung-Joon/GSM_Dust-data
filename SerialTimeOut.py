@@ -62,8 +62,13 @@ def dataUpdate(url, dataFrame : list):
     from firebase import firebase
     fbase = firebase.FirebaseApplication(url, None)
     
+    # 데이터 임의로 넣기 0 ~ 9
+    value_list = [i for i in range(10)]
+    for i, j in zip (dataFrame, value_list):
+        dataFrame[i] = value_list[j]
+
     try:
-        fbase.put('/','data', dataFrame)
+        fbase.put('/','data', dataFrame) # DB 넣기
     except Exception as e:
         print(e)
         print("Can't Put Data!")
