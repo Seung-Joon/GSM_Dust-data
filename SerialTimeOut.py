@@ -1,11 +1,9 @@
 import signal
-import serial
 from contextlib import contextmanager
-
+import serial
+import datetime as d
+import time
 from firebase import firebase
-from urllib.request import urlopen, Request
-import urllib
-import bs4
 
 ser = serial.Serial(port='/dev/ttyS0',baudrate=9600)
 
@@ -23,18 +21,10 @@ def timeout(time):
 def raise_timeout(signum, frame):
     raise TimeoutError
 
-def getDateValue(): # current date
-  import datetime as d
-  today = d.datetime.today()
-
-  year = today.year
-  month = today.month
-  day = today.day
-  hour = today.hour
-  minute = today.minute
-  second = today.second
-  date_value =  str(year) + str(append0(month)) + str(append0(day)) + str(append0(hour)) + str(append0(minute)) + str(append0(second))
-  return date_value
+def getDateValue():
+    now = time.localtime()
+    key = "%04d%02d%02d%02d%02d%02d" %(now.tm_year, now.tm_mon, now.tm_mday, now.tm_hour, now.tm_min, now.tm_sec)
+    return key
 
 def dataRequest(request_code = ''):
     ser.write(request_code.encode('utf-16'))
@@ -65,17 +55,22 @@ def dataDecode(data_list):
         DATA_FRAME = {'ERR' : -1}
     return DATA_FRAME
 
-def dataUpdate(url):
-    # fbase = firebase.FirebaseApplication(url, None)
-    # fbase.put()
-    pass
-while 1:
-    enc_location = urllib.parse.quote(location, "+날씨")
-    url = "https://search.naver.com/search.naver?ie=utf8&query=" + enc_location
+url = 'https://gsm-dustdata.firebaseio.com'
+
+fbase = firebase.FirebaseApplication(url,None)
+def dataUpdate(url, dataFrame : list): 
+    from firebase import firebase
+    fbase = firebase.FirebaseApplication(url, None)
     
+    try:
+        fbase.put('/','data', dataFrame)
+    except Exception as e:
+        print(e)
+        print("Can't Put Data!")
+        
+while 1:
     SYS_DATA_FRAME = dataDecode(dataRequest('^'))
     print(SYS_DATA_FRAME)
-
-    
-    
-    
+    print('updating data')
+    dataUpdate(url, list(SYS_DATA_FRAME))
+    print('done..')
