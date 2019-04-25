@@ -2,8 +2,8 @@ import signal
 from contextlib import contextmanager
 import serial
 import datetime as d
-import time
 from firebase import firebase
+import time
 
 ser = serial.Serial(port='/dev/ttyS0',baudrate=9600)
 
@@ -57,25 +57,26 @@ def dataDecode(data_list):
 
 url = 'https://gsm-dustdata.firebaseio.com'
 
-fbase = firebase.FirebaseApplication(url,None)
-def dataUpdate(url, dataFrame : dict): 
-    from firebase import firebase
+def dataSynchronization(url, dataFrame): 
     fbase = firebase.FirebaseApplication(url, None)
-    
-    # 데이터 임의로 넣기 0 ~ 9
-    value_list = [i for i in range(10)]
-    for i, j in zip (dataFrame, value_list):
-        dataFrame[i] = value_list[j]
-
     try:
-        fbase.put('/','data', dataFrame) # DB 넣기
+        fbase.put('/','data', dataDecode(dataFrame))
+        print("Synchronization Success")
     except Exception as e:
-        print(e)
-        print("Can't Put Data!")
+        print("ERROR: fail to update data")
+        
+def dataAccumulation(url, dateValue, dataFrame):
+    fbase = firebase.FirebaseApplication(url, None)
+    try:
+        fbase.put('/', 'AccData', {dateValue:dataDecode(dataFrame)})
+        print("Accumulation Success")
+    except Exception as e:
+        print("ERROR: fail to update data")
         
 while 1:
-    SYS_DATA_FRAME = dataDecode(dataRequest('^'))
+    SYS_DATA_FRAME = dataRequest('^')
     print(SYS_DATA_FRAME)
     print('updating data')
-    dataUpdate(url, SYS_DATA_FRAME)
+    dataSynchronization(url, SYS_DATA_FRAME)
+    dataAccumulation(url, str(getDateValue()), SYS_DATA_FRAME) 
     print('done..')
