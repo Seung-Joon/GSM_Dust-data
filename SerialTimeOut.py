@@ -15,9 +15,6 @@ collection = database.accData
 
 fbase = firebase.FirebaseApplication(url, None)
 
-now = time.localtime()
-key = "%04d%02d%02d%02d%02d%02d" % tuple(tm for tm in now[:6])
-
 @contextmanager
 def timeout(time):
     signal.signal(signal.SIGALRM, raise_timeout)
@@ -33,6 +30,9 @@ def raise_timeout(selsignum, frame):
     raise TimeoutError
 
 def getDateValue():
+    now = time.localtime()
+    key = "%04d%02d%02d%02d%02d%02d" % tuple(tm for tm in now[:6])
+
     return key
 
 def dataRequest(request_code = ''):
