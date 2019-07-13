@@ -20,7 +20,7 @@ key = "%04d%02d%02d%02d%02d%02d" % tuple(tm for tm in now[:6])
 
 @contextmanager
 def timeout(time):
-    signal.signal(signal.SIGALRM, self.raise_timeout)
+    signal.signal(signal.SIGALRM, raise_timeout)
     signal.alarm(time)
     try:
         yield
@@ -42,7 +42,7 @@ def dataRequest(request_code = ''):
         try:
             dataFrame = ser.readline().decode()
             if len(dataFrame) < 30:
-                raise NotImplementError
+                raise NotImplementedError
             else:
                 dataFrame = dataFrame.split()
                 for i in range(len(dataFrame)):
@@ -72,7 +72,7 @@ def dataDecode(data_list):
 def dataSynchronization(dataFrame):
     with timeout(5):
         try:
-            fbase.put('/','data', didataDecode(dataFrame)))
+            fbase.put('/','data', dataDecode(dataFrame))
             print("Success")
         except Exception as e:
             print("ERR MESSAGE\n")
@@ -92,9 +92,9 @@ def dataAccumulation(dateValue, dataFrame):
                 
 
 if __name__ == "__main__":
-    SYS_DATA_FRAME = dm.dataRequest('^')
+    SYS_DATA_FRAME = dataRequest('^')
     print(SYS_DATA_FRAME)
     print('updating data')
-    dm.dataSynchronization(SYS_DATA_FRAME)
-    dm.dataAccumulation(dm.getDateValue(), SYS_DATA_FRAME)
+    dataSynchronization(SYS_DATA_FRAME)
+    dataAccumulation(getDateValue(), SYS_DATA_FRAME)
     print('done..')
